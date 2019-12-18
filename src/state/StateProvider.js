@@ -6,7 +6,7 @@ const state = {
     username: ""
 }
 
-const stateSetters = {
+const setters = {
     setTitleAndUsername: function(){
         this.setState({
             title: "This is a custom title",
@@ -20,7 +20,9 @@ const stateSetters = {
 }
 
 
-const midstate = new Midstate(state, stateSetters, {dynamicSetters: true, allowPolymorphism: true}) 
+const midstate = new Midstate(state, setters, {dynamicSetters: true, allowPolymorphism: false}) 
+
+midstate.addProviderValue({myValue: 5})
 
 export const StateContext = midstate.context
 export const StateProvider = midstate.createProvider() 

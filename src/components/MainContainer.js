@@ -4,10 +4,10 @@ import {StateContext} from '../state/StateProvider';
 
 const MainContainer = () => {
 
-    const {state, setters} = useContext(StateContext)
+    const {state, setters, values} = useContext(StateContext)
 
 
-    console.log({state, setters})
+    console.log({state, setters, values})
 
     return (
 
