@@ -3,7 +3,9 @@ import Midstate from '../midstate/Midstate';
 
 const state = {
     title: "TITLE",
-    username: ""
+    username: "",
+    MY_CONSTANT: "CONSTANT",
+    _dontChangeThis: "OTHER CONSTANT"
 }
 
 const setters = {

@@ -4,7 +4,7 @@ import React, { createContext, Component } from "react";
 import { bindMethods, createStateSetters } from "./helpers";
 
 
-const OPTIONS = {
+const DEFAULT_OPTIONS = {
     dynamicSetters: true,
     allowPolymorphism: true,
     developmentWarnings: true
@@ -19,11 +19,10 @@ class Midstate {
         this.values = {}
 
         // options
-        this.options = {...OPTIONS, ...options}
+        this.options = {...DEFAULT_OPTIONS, ...options}
         this.dynamicSetters = this.options.dynamicSetters
         this.allowPolymorphism = this.options.allowPolymorphism
         this.developmentWarnings = this.options.developmentWarnings
-        console.log(this.options)
     }
 
     addProviderValue(newValue){
