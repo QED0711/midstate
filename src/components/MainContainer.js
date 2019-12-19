@@ -4,10 +4,10 @@ import {StateContext} from '../state/StateProvider';
 
 const MainContainer = () => {
 
-    const {state, setters, values} = useContext(StateContext)
+    const {state, setters, constants, methods} = useContext(StateContext)
 
 
-    console.log({state, setters, values})
+    console.log({state, setters, constants, methods})
 
     return (
 
@@ -19,7 +19,7 @@ const MainContainer = () => {
             <br/>
             <button onClick={
                 e => {
-                    setters.setTitle("New Title")
+                    methods.contrivedSetState();
                 }
             }>
                 Set Title
@@ -35,6 +35,12 @@ const MainContainer = () => {
                 setters.setTitleAndUsername()
             }}>
                 Set Both
+            </button>
+            <br/>
+            <button onClick={e => {
+                methods.logThis()
+            }}>
+                Method
             </button>
         </div>
 

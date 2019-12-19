@@ -17,14 +17,26 @@ const setters = {
     },
 
     setTitle: function(){
-        this.setState({title: "BOOM"})
+        this.setState({title: "MY AWESOME TITLE"})
+    }
+}
+
+const methods = {
+    logThis: function(){
+        console.log(this)
+    },
+    
+    contrivedSetState: function(){
+        this.setters.setTitle(JSON.stringify(new Date().toJSON()))
     }
 }
 
 
-const midstate = new Midstate(state, setters, {dynamicSetters: true, allowPolymorphism: false}) 
+const midstate = new Midstate(state, {dynamicSetters: true, allowSetterOverwrite: false, overwriteProtectionLevel: 1}) 
 
-midstate.addProviderValue({myValue: 5})
+midstate.addCustomSetters(setters)
+midstate.addConstants({myValue: 5, myOtherValue: 10})
+midstate.addMethods(methods)
 
 export const StateContext = midstate.context
 export const StateProvider = midstate.createProvider() 
