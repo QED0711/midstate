@@ -17,7 +17,7 @@ const formatStateName = (name) => {
     Takes an object key (name) as an input, and returns that name capitalized with the word "set" prepended to it.
     If the word already starts with a capital letter (or and underscore _), returns null. 
 
-    This functionality allows for standard key names to automatically get setters, while also allowing for users to specify key names that should not be changed or get setters. 
+    This functionality allows for standard key names to automatically get setters, while also allowing for users to specify key names that should not be changed or should not get setters. 
     */
     name = name.split("");
 
@@ -27,7 +27,7 @@ const formatStateName = (name) => {
     return "set" + name.join("");
 }
 
-export const createStateSetters = (state, setters = {}) => {
+export const createStateSetters = (state, bindToLocalStorage, setters={}) => {
     /* 
     iterates through a provided state object, and takes each key name (state value) and creates a setter method for that value. 
     Following the standard React convention, a key called "myKey" would get a setter method called "setMyKey".
@@ -42,6 +42,9 @@ export const createStateSetters = (state, setters = {}) => {
                 const stateChange = {}
                 stateChange[s] = value;
                 this.setState(stateChange)
+                if(bindToLocalStorage){
+                    localStorage.setItem(s, value)
+                }
             }
         }
 

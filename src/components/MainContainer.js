@@ -19,14 +19,15 @@ const MainContainer = () => {
             <br/>
             <button onClick={
                 e => {
-                    methods.contrivedSetState();
+                    // methods.contrivedSetState();
+                    setters.setTitle("MY AWESOME TITLE")
                 }
             }>
                 Set Title
             </button>
             <br/>
             <button onClick={e => {
-                setters.setUsername("Quinn")
+                setters.setUsername("Something Else")
             }}>
                 Add Name
             </button>

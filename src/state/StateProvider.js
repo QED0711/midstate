@@ -10,10 +10,12 @@ const state = {
 
 const setters = {
     setTitleAndUsername: function(){
-        this.setState({
+        const newState = {
             title: "This is a custom title",
             username: "NEW USERNAME"
-        })
+        }
+
+        this.setStateAndStorage(newState)
     },
 
     setTitle: function(){
@@ -32,7 +34,12 @@ const methods = {
 }
 
 
-const midstate = new Midstate(state, {dynamicSetters: true, allowSetterOverwrite: false, overwriteProtectionLevel: 1}) 
+const midstate = new Midstate(state, {
+    dynamicSetters: true, 
+    allowSetterOverwrite: false, 
+    overwriteProtectionLevel: 1,
+    bindToLocalStorage: true,
+}) 
 
 midstate.addCustomSetters(setters)
 midstate.addConstants({myValue: 5, myOtherValue: 10})
