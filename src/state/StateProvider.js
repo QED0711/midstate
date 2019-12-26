@@ -38,8 +38,9 @@ const midstate = new Midstate(state, {
     dynamicSetters: true, 
     allowSetterOverwrite: false, 
     overwriteProtectionLevel: 1,
-    bindToLocalStorage: true,
 }) 
+
+midstate.connectToLocalStorage({name: "myState"})
 
 midstate.addCustomSetters(setters)
 midstate.addConstants({myValue: 5, myOtherValue: 10})

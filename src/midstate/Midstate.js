@@ -8,7 +8,11 @@ const DEFAULT_OPTIONS = {
     allowSetterOverwrite: true,
     developmentWarnings: true,
     overwriteProtectionLevel: 1,
-    bindToLocalStorage: false
+}
+
+const DEFAULT_STORAGE_OPTIONS = {
+    name: null,
+    unmountBehavior: "all"
 }
 
 class Midstate {
@@ -27,7 +31,9 @@ class Midstate {
         this.allowSetterOverwrite = this.options.allowSetterOverwrite
         this.developmentWarnings = this.options.developmentWarnings
         this.overwriteProtectionLevel = this.options.overwriteProtectionLevel
-        this.bindToLocalStorage = this.options.bindToLocalStorage
+        
+        // Local Storage Connection
+        this.bindToLocalStorage = false
 
 
     }
@@ -42,6 +48,13 @@ class Midstate {
 
     addMethods(methods) {
         this.methods = methods;
+    }
+
+    connectToLocalStorage(options={}){
+        this.bindToLocalStorage = true
+        this.storageOptions = {...DEFAULT_STORAGE_OPTIONS, ...options}
+
+        if(!this.storageOptions.name) throw new Error("When connecting your Midstate instance to the local storage, you must provide an unique name (string) to avoid conflicts with other local storage parameters.")
     }
 
     createProvider() {
