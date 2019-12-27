@@ -61,16 +61,22 @@ class Midstate {
         // copy instance properties/methods
         const Context = this.context;
         const state = this.state;
-        const bindToLocalStorage = this.bindToLocalStorage;
         let constants = this.constants
         let methods = this.methods;
+
+        const bindToLocalStorage = this.bindToLocalStorage;
+        const storageOptions = this.storageOptions
         let setters;
 
+        // initialize local storage with state
+        localStorage.setItem(storageOptions.name, JSON.stringify(state))
 
+
+        // Pre class definition setup
         if (this.allowSetterOverwrite) {
-            setters = this.dynamicSetters ? { ...createStateSetters(state, bindToLocalStorage), ...this.setters } : { ...this.setters };
+            setters = this.dynamicSetters ? { ...createStateSetters(state, bindToLocalStorage, storageOptions.name), ...this.setters } : { ...this.setters };
         } else {
-            let dynamicSetters = createStateSetters(state)
+            let dynamicSetters = createStateSetters(state, bindToLocalStorage, storageOptions.name)
             const dynamicKeys = Object.keys(dynamicSetters);
 
             for (let key of Object.keys(this.setters)) {
@@ -91,7 +97,7 @@ class Midstate {
                     delete this.setters[key]
                 }
             }
-            setters = this.dynamicSetters ? { ...createStateSetters(state, bindToLocalStorage), ...this.setters } : { ...this.setters };
+            setters = this.dynamicSetters ? { ...createStateSetters(state, bindToLocalStorage, storageOptions.name), ...this.setters } : { ...this.setters };
         }
 
         // define Provider class
@@ -103,6 +109,7 @@ class Midstate {
                 this.methods = bindMethods(methods, this);
 
                 this.bindToLocalStorage = bindToLocalStorage;
+                this.storageOptions = storageOptions;
 
                 this.updateStateFromLocalStorage = this.updateStateFromLocalStorage.bind(this);
                 this.setStateAndStorage = this.setStateAndStorage.bind(this);
@@ -111,13 +118,11 @@ class Midstate {
             setStateAndStorage(state) {
                 this.setState(state)
 
-                for(let key in state){
-                    localStorage.setItem(key, state[key]);
-                }
+                localStorage.setItem(this.storageOptions.name, JSON.stringify(state))
             }
 
             updateStateFromLocalStorage() {
-                this.setState({ ...this.state, ...localStorage })
+                this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
             }
 
             componentDidMount() {

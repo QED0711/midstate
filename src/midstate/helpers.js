@@ -27,10 +27,12 @@ const formatStateName = (name) => {
     return "set" + name.join("");
 }
 
-export const createStateSetters = (state, bindToLocalStorage, setters={}) => {
+export const createStateSetters = (state, bindToLocalStorage, storageName=null, setters={}) => {
     /* 
     iterates through a provided state object, and takes each key name (state value) and creates a setter method for that value. 
     Following the standard React convention, a key called "myKey" would get a setter method called "setMyKey".
+
+    If bindToLocalStorage is truthy, will also add logic to set localStorage items
     */
 
     let formattedName;
@@ -39,11 +41,15 @@ export const createStateSetters = (state, bindToLocalStorage, setters={}) => {
 
         if (formattedName) {
             setters[formattedName] = function (value) {
-                const stateChange = {}
-                stateChange[s] = value;
-                this.setState(stateChange)
                 if(bindToLocalStorage){
-                    localStorage.setItem(s, value)
+                    const newState = {...JSON.parse(localStorage[storageName])}
+                    newState[s] = value;
+                    localStorage.setItem(storageName, newState)
+                    this.setStateAndStorage(newState)
+                } else {
+                    const newState = {}
+                    newState[s] = value;
+                    this.setState(newState)
                 }
             }
         }
