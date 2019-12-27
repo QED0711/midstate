@@ -122,12 +122,16 @@ class Midstate {
             }
 
             updateStateFromLocalStorage() {
-                this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
+                try{
+                    this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
+                } catch(err){
+                    // console.log(err)
+                }
             }
 
             componentDidMount() {
                 // When component mounts, if bindToLocalStorage has been set to true, make the window listen for storage change events and update the state 
-                if (bindToLocalStorage) {
+                if (bindToLocalStorage && !window.onstorage) {
                     window.onstorage = e => {
                         this.updateStateFromLocalStorage();
                     }
