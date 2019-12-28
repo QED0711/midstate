@@ -111,15 +111,28 @@ class Midstate {
                 this.bindToLocalStorage = bindToLocalStorage;
                 this.storageOptions = storageOptions;
 
+                this.setStorageState = this.setStorageState.bind(this);
+                this.setStorageStateAsync = this.setStorageStateAsync.bind(this);
                 this.updateStateFromLocalStorage = this.updateStateFromLocalStorage.bind(this);
-                this.setStateAndStorage = this.setStateAndStorage.bind(this);
             }
 
-            setStateAndStorage(state) {
-                this.setState(state)
-
-                localStorage.setItem(this.storageOptions.name, JSON.stringify(state))
+            setStorageState(newState) {
+                const updatedState = {...this.state, ...newState}
+                
+                this.setState(updatedState)
+                localStorage.setItem(this.storageOptions.name, JSON.stringify(updatedState))
             }
+            
+            setStorageStateAsync(newState) {
+                const updatedState = {...this.state, ...newState}
+                return new Promise(resolve => {
+                    localStorage.setItem(this.storageOptions.name, JSON.stringify(updatedState))
+                    this.setState(updatedState, () => {
+                        resolve(this.state)
+                    })
+                })
+            }
+            
 
             updateStateFromLocalStorage() {
                 try{

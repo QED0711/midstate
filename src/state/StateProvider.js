@@ -9,17 +9,18 @@ const state = {
 }
 
 const setters = {
-    setTitleAndUsername: function(){
+    setTitleAndUsername(){
         const newState = {
             title: "This is a custom title",
             username: "NEW USERNAME"
         }
 
-        this.setStateAndStorage(newState)
+        this.setStorageState(newState)
     },
 
-    setTitle: function(){
-        this.setState({title: "MY AWESOME TITLE"})
+    async setTitle(){
+        const myState = await this.setStorageStateAsync({title: "MY AWESOME TITLE"})
+        console.log(myState)
     }
 }
 
@@ -36,11 +37,11 @@ const methods = {
 
 const midstate = new Midstate(state, {
     dynamicSetters: true, 
-    allowSetterOverwrite: false, 
+    allowSetterOverwrite: true, 
     overwriteProtectionLevel: 1,
 }) 
 
-midstate.connectToLocalStorage({name: "myState"})
+midstate.connectToLocalStorage({name: "newState"})
 
 midstate.addCustomSetters(setters)
 midstate.addConstants({myValue: 5, myOtherValue: 10})

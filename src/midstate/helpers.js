@@ -45,7 +45,7 @@ export const createStateSetters = (state, bindToLocalStorage, storageName=null, 
                     const newState = {...JSON.parse(localStorage[storageName])}
                     newState[s] = value;
                     localStorage.setItem(storageName, newState)
-                    this.setStateAndStorage(newState)
+                    this.setStorageState(newState)
                 } else {
                     const newState = {}
                     newState[s] = value;
