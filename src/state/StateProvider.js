@@ -1,6 +1,10 @@
 
 import Midstate from '../midstate/Midstate';
 
+
+// :::::::::::
+// :: STATE ::
+// :::::::::::
 const state = {
     title: "TITLE",
     username: "",
@@ -8,22 +12,28 @@ const state = {
     _dontChangeThis: "OTHER CONSTANT"
 }
 
+// :::::::::::::
+// :: SETTERS ::
+// :::::::::::::
 const setters = {
     setTitleAndUsername(){
         const newState = {
             title: "This is a custom title",
             username: "NEW USERNAME"
         }
-
+        
         this.setStorageState(newState)
     },
-
+    
     async setTitle(){
         const myState = await this.setStorageStateAsync({title: "MY AWESOME TITLE"})
         console.log(myState)
     }
 }
 
+// :::::::::::::
+// :: METHODS ::
+// :::::::::::::
 const methods = {
     logThis: function(){
         console.log(this)
@@ -35,6 +45,9 @@ const methods = {
 }
 
 
+// ::::::::::::::::::::
+// :: INITIALIZATION ::
+// ::::::::::::::::::::
 const midstate = new Midstate(state, {
     dynamicSetters: true, 
     allowSetterOverwrite: true, 
