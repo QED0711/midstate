@@ -60,5 +60,11 @@ midstate.addCustomSetters(setters)
 midstate.addConstants({myValue: 5, myOtherValue: 10})
 midstate.addMethods(methods)
 
+
+
+// :::::::::::::
+// :: EXPORTS ::
+// :::::::::::::
+export const msInstance = midstate
 export const StateContext = midstate.context
 export const StateProvider = midstate.createProvider() 

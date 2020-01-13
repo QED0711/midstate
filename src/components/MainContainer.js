@@ -1,11 +1,12 @@
 import React, {useContext} from 'react';
 
-import {StateContext} from '../state/StateProvider';
+import {StateContext, msInstance} from '../state/StateProvider';
 
 const MainContainer = () => {
 
     const {state, setters, constants, methods} = useContext(StateContext)
 
+    msInstance.clearStateFromStorage()
 
     console.log({state, setters, constants, methods})
 

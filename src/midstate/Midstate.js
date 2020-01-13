@@ -57,6 +57,14 @@ class Midstate {
         if(!this.storageOptions.name) throw new Error("When connecting your Midstate instance to the local storage, you must provide an unique name (string) to avoid conflicts with other local storage parameters.")
     }
 
+    clearStateFromStorage(){
+        const handleUnload = e => {
+            this.storageOptions.name && localStorage.removeItem(this.storageOptions.name)
+        }
+        window.onbeforeunload = handleUnload
+        window.onunload = handleUnload
+    }
+
     createProvider() {
         // copy instance properties/methods
         const Context = this.context;
@@ -138,7 +146,9 @@ class Midstate {
                 try{
                     this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
                 } catch(err){
-                    // console.log(err)
+                    this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) }, () => {
+                        localStorage.setItem(storageOptions.name, JSON.stringify(this.state))
+                    })
                 }
             }
 
