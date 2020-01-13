@@ -129,6 +129,7 @@ class Midstate {
                 
                 this.setState(updatedState)
                 localStorage.setItem(this.storageOptions.name, JSON.stringify(updatedState))
+                console.log(localStorage)
             }
             
             setStorageStateAsync(newState) {
@@ -146,9 +147,19 @@ class Midstate {
                 try{
                     this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
                 } catch(err){
-                    this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) }, () => {
-                        localStorage.setItem(storageOptions.name, JSON.stringify(this.state))
-                    })
+                    try{
+                        const updatedState = typeof localStorage[storageOptions.name] === "string"
+                        ?
+                        { ...this.state, ...JSON.parse(localStorage[storageOptions.name]) }
+                        :
+                        { ...this.state }
+    
+                        this.setState(updatedState, () => {
+                            localStorage.setItem(storageOptions.name, JSON.stringify(this.state))
+                        })
+                    } catch(error){
+                        // do nothing
+                    }
                 }
             }
 

@@ -25,10 +25,10 @@ const setters = {
         this.setStorageState(newState)
     },
     
-    async setTitle(){
-        const myState = await this.setStorageStateAsync({title: "MY AWESOME TITLE"})
-        console.log(myState)
-    }
+    // async setTitle(){
+    //     const myState = await this.setStorageStateAsync({title: "MY AWESOME TITLE"})
+    //     console.log(myState)
+    // }
 }
 
 // :::::::::::::
