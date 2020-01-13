@@ -1,49 +1,23 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 
-import {StateContext, msInstance} from '../state/StateProvider';
+import { StateContext, msInstance } from '../state/StateProvider';
+import { ConfigContext } from '../state/ConfigState';
 
 const MainContainer = () => {
 
-    const {state, setters, constants, methods} = useContext(StateContext)
+    const { state, setters } = useContext(ConfigContext)
+    
+    const {title, backgroundColor} = state;
+    const {setTitle, setBackgroundColor} = setters;
 
     msInstance.clearStateFromStorage()
 
-    console.log({state, setters, constants, methods})
+    // console.log({ state, setters, constants, methods })
 
     return (
 
         <div>
-            
-            {state.title}
-            <br/>
-            {state.username}
-            <br/>
-            <button onClick={
-                e => {
-                    // methods.contrivedSetState();
-                    setters.setTitle("MY AWESOME TITLE")
-                }
-            }>
-                Set Title
-            </button>
-            <br/>
-            <button onClick={e => {
-                setters.setUsername("Something Else")
-            }}>
-                Add Name
-            </button>
-            <br/>
-            <button onClick={e => {
-                setters.setTitleAndUsername()
-            }}>
-                Set Both
-            </button>
-            <br/>
-            <button onClick={e => {
-                methods.logThis()
-            }}>
-                Method
-            </button>
+            <h1 style={{backgroundColor}}>{title}</h1>
         </div>
 
     )

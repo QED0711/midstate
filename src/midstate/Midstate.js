@@ -32,6 +32,9 @@ class Midstate {
         this.developmentWarnings = this.options.developmentWarnings
         this.overwriteProtectionLevel = this.options.overwriteProtectionLevel
         
+        // initialize blank storageOptions (will be populated later if user chooses)
+        this.storageOptions = {}
+
         // Local Storage Connection
         this.bindToLocalStorage = false
 
@@ -77,7 +80,7 @@ class Midstate {
         let setters;
 
         // initialize local storage with state
-        localStorage.setItem(storageOptions.name, JSON.stringify(state))
+        storageOptions.name && localStorage.setItem(storageOptions.name, JSON.stringify(state))
 
 
         // Pre class definition setup
@@ -129,7 +132,6 @@ class Midstate {
                 
                 this.setState(updatedState)
                 localStorage.setItem(this.storageOptions.name, JSON.stringify(updatedState))
-                console.log(localStorage)
             }
             
             setStorageStateAsync(newState) {
