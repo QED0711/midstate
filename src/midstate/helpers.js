@@ -41,16 +41,14 @@ export const createStateSetters = (state, bindToLocalStorage, storageName=null, 
 
         if (formattedName) {
             setters[formattedName] = function (value) {
-                if(bindToLocalStorage){
-                    const newState = {...JSON.parse(localStorage[storageName])}
-                    newState[s] = value;
-                    localStorage.setItem(storageName, newState)
-                    this.setStorageState(newState)
-                } else {
-                    const newState = {}
-                    newState[s] = value;
-                    this.setState(newState)
-                }
+                const newState = {}
+                newState[s] = value;
+                return new Promise(resolve => {
+                    this.setState(newState, () => {
+                        bindToLocalStorage && localStorage.setItem(storageName, JSON.stringify(this.state))
+                        resolve(this.state)
+                    })
+                })
             }
         }
 

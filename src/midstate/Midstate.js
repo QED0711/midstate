@@ -111,7 +111,7 @@ class Midstate {
             setters = this.dynamicSetters ? { ...createStateSetters(state, bindToLocalStorage, storageOptions.name), ...this.setters } : { ...this.setters };
         }
 
-        // define Provider class
+        // define Provider class component
         class Provider extends Component {
             constructor(props) {
                 super(props);
@@ -123,28 +123,19 @@ class Midstate {
                 this.storageOptions = storageOptions;
 
                 this.setStorageState = this.setStorageState.bind(this);
-                this.setStorageStateAsync = this.setStorageStateAsync.bind(this);
                 this.updateStateFromLocalStorage = this.updateStateFromLocalStorage.bind(this);
             }
 
             setStorageState(newState) {
                 const updatedState = {...this.state, ...newState}
-                
-                this.setState(updatedState)
-                localStorage.setItem(this.storageOptions.name, JSON.stringify(updatedState))
-            }
-            
-            setStorageStateAsync(newState) {
-                const updatedState = {...this.state, ...newState}
                 return new Promise(resolve => {
-                    localStorage.setItem(this.storageOptions.name, JSON.stringify(updatedState))
                     this.setState(updatedState, () => {
+                        localStorage.setItem(this.storageOptions.name, JSON.stringify(this.state))
                         resolve(this.state)
                     })
                 })
             }
             
-
             updateStateFromLocalStorage() {
                 try{
                     this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
@@ -182,7 +173,12 @@ class Midstate {
 
             render() {
                 return (
-                    <Context.Provider value={{ state: this.state, setters: this.setters, constants: constants, methods: this.methods }}>
+                    <Context.Provider value={{ 
+                        state: this.state, 
+                        setters: this.setters, 
+                        constants: constants, 
+                        methods: this.methods 
+                    }}>
                         {this.props.children}
                     </Context.Provider>
                 )

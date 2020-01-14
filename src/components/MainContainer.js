@@ -7,7 +7,7 @@ const MainContainer = () => {
 
     const { state, setters } = useContext(ConfigContext)
     
-    const {title, backgroundColor} = state;
+    const {title, backgroundColor, titleColor} = state;
     const {setTitle, setBackgroundColor} = setters;
 
     msInstance.clearStateFromStorage()
@@ -17,7 +17,7 @@ const MainContainer = () => {
     return (
 
         <div>
-            <h1 style={{backgroundColor}}>{title}</h1>
+            <h1 style={{backgroundColor, color: titleColor}}>{title}</h1>
         </div>
 
     )

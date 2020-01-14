@@ -5,8 +5,8 @@ import { ConfigContext } from '../state/ConfigState';
 const ConfigContainer = () => {
     const { state, setters } = useContext(ConfigContext)
 
-    const { title, backgroundColor } = state;
-    const { setTitle, setBackgroundColor } = setters;
+    const { title, titleColor, backgroundColor } = state;
+    const { setTitle, setBackgroundColor, setTitleColor } = setters;
 
     const handleClick = color => e => {
         setBackgroundColor(color)
@@ -16,6 +16,11 @@ const ConfigContainer = () => {
     const handleColorChange = e => {
         const userColor = document.getElementById("color-input").value
         setBackgroundColor(userColor)
+    }
+
+    const handleTitleColorChange = e => {
+        const titleColor = document.getElementById("title-color-input").value
+        setTitleColor(titleColor)
     }
 
     const handleChange = e => {
@@ -42,6 +47,13 @@ const ConfigContainer = () => {
                 type="text"
                 defaultValue={title}
                 onChange={handleChange}
+            />
+            
+            <input
+                id="title-color-input"
+                type="text"
+                defaultValue={titleColor}
+                onChange={handleTitleColorChange}
             />
         </div>
     )
