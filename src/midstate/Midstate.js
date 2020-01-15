@@ -124,6 +124,8 @@ class Midstate {
 
                 this.setStorageState = this.setStorageState.bind(this);
                 this.updateStateFromLocalStorage = this.updateStateFromLocalStorage.bind(this);
+
+                
             }
 
             setStorageState(newState) {
@@ -158,6 +160,7 @@ class Midstate {
 
             componentDidMount() {
                 // When component mounts, if bindToLocalStorage has been set to true, make the window listen for storage change events and update the state 
+                // if the window is already listening for storage events, then do nothing
                 if (bindToLocalStorage && !window.onstorage) {
                     window.onstorage = e => {
                         this.updateStateFromLocalStorage();
