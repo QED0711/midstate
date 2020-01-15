@@ -122,7 +122,6 @@ class Midstate {
                 this.bindToLocalStorage = bindToLocalStorage;
                 this.storageOptions = storageOptions;
 
-                // this.setStorageState = this.setStorageState.bind(this);
                 this.updateStateFromLocalStorage = this.updateStateFromLocalStorage.bind(this);
 
                 // assign master version of setState prior to reassignment
@@ -130,38 +129,30 @@ class Midstate {
 
                 // Reassign setState function to return a promise, and by default, handle localStorage changes
                 this.setState = function(state){
-                    console.log("SET STATE UPDATED")
                     return new Promise(resolve => {
                         this.setStateMaster(state, () => {
-                            if(this.bindToLocalStorage){
-                                localStorage.setItem(this.storageOptions.name, JSON.stringify(this.state))
-                            }
+                            this.bindToLocalStorage && localStorage.setItem(this.storageOptions.name, JSON.stringify(this.state))
                             resolve(this.state)
                         })
                     })
                 }
 
                 this.setState = this.setState.bind(this);
-
             }
 
             updateStateFromLocalStorage() {
                 try {
                     this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
                 } catch (err) {
-                    // try {
-                        const updatedState = typeof localStorage[storageOptions.name] === "string"
-                            ?
-                            { ...this.state, ...JSON.parse(localStorage[storageOptions.name]) }
-                            :
-                            { ...this.state }
+                    const updatedState = typeof localStorage[storageOptions.name] === "string"
+                        ?
+                        { ...this.state, ...JSON.parse(localStorage[storageOptions.name]) }
+                        :
+                        { ...this.state }
 
-                        this.setState(updatedState, () => {
-                            localStorage.setItem(storageOptions.name, JSON.stringify(this.state))
-                        })
-                    // } catch (error) {
-                    //     // do nothing
-                    // }
+                    this.setState(updatedState, () => {
+                        localStorage.setItem(storageOptions.name, JSON.stringify(this.state))
+                    })
                 }
             }
 
@@ -175,20 +166,15 @@ class Midstate {
                 }
             }
 
-            componentWillUnmount() {
-                if (bindToLocalStorage) {
-                    window.onstorage = null;
-                }
-            }
-
             render() {
+                const value = {
+                    state: this.state,
+                    setters: this.setters,
+                    constants: constants,
+                    methods: this.methods
+                }
                 return (
-                    <Context.Provider value={{
-                        state: this.state,
-                        setters: this.setters,
-                        constants: constants,
-                        methods: this.methods
-                    }}>
+                    <Context.Provider value={value}>
                         {this.props.children}
                     </Context.Provider>
                 )

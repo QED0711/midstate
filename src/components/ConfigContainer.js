@@ -8,12 +8,10 @@ const ConfigContainer = () => {
     const { title, titleColor, backgroundColor } = state;
     const { setTitle, setBackgroundColor, setTitleColor } = setters;
 
-    console.log({title})
-
     const handleClick = color => async e => {
         // by default, setters will use the adjusted setState and will return promises for asynchronous execution
         const state = await setBackgroundColor(color)
-        console.log({state})
+        // console.log({state})
     }
 
 
