@@ -31,7 +31,7 @@ class Midstate {
         this.allowSetterOverwrite = this.options.allowSetterOverwrite
         this.developmentWarnings = this.options.developmentWarnings
         this.overwriteProtectionLevel = this.options.overwriteProtectionLevel
-        
+
         // initialize blank storageOptions (will be populated later if user chooses)
         this.storageOptions = {}
 
@@ -53,14 +53,14 @@ class Midstate {
         this.methods = methods;
     }
 
-    connectToLocalStorage(options={}){
+    connectToLocalStorage(options = {}) {
         this.bindToLocalStorage = true
-        this.storageOptions = {...DEFAULT_STORAGE_OPTIONS, ...options}
+        this.storageOptions = { ...DEFAULT_STORAGE_OPTIONS, ...options }
 
-        if(!this.storageOptions.name) throw new Error("When connecting your Midstate instance to the local storage, you must provide an unique name (string) to avoid conflicts with other local storage parameters.")
+        if (!this.storageOptions.name) throw new Error("When connecting your Midstate instance to the local storage, you must provide an unique name (string) to avoid conflicts with other local storage parameters.")
     }
 
-    clearStateFromStorage(){
+    clearStateFromStorage() {
         const handleUnload = e => {
             this.storageOptions.name && localStorage.removeItem(this.storageOptions.name)
         }
@@ -122,39 +122,46 @@ class Midstate {
                 this.bindToLocalStorage = bindToLocalStorage;
                 this.storageOptions = storageOptions;
 
-                this.setStorageState = this.setStorageState.bind(this);
+                // this.setStorageState = this.setStorageState.bind(this);
                 this.updateStateFromLocalStorage = this.updateStateFromLocalStorage.bind(this);
 
-                
+                // assign master version of setState prior to reassignment
+                this.setStateMaster = this.setState;
+
+                // Reassign setState function to return a promise, and by default, handle localStorage changes
+                this.setState = function(state){
+                    console.log("SET STATE UPDATED")
+                    return new Promise(resolve => {
+                        this.setStateMaster(state, () => {
+                            if(this.bindToLocalStorage){
+                                localStorage.setItem(this.storageOptions.name, JSON.stringify(this.state))
+                            }
+                            resolve(this.state)
+                        })
+                    })
+                }
+
+                this.setState = this.setState.bind(this);
+
             }
 
-            setStorageState(newState) {
-                const updatedState = {...this.state, ...newState}
-                return new Promise(resolve => {
-                    this.setState(updatedState, () => {
-                        localStorage.setItem(this.storageOptions.name, JSON.stringify(this.state))
-                        resolve(this.state)
-                    })
-                })
-            }
-            
             updateStateFromLocalStorage() {
-                try{
+                try {
                     this.setState({ ...this.state, ...JSON.parse(localStorage[storageOptions.name]) })
-                } catch(err){
-                    try{
+                } catch (err) {
+                    // try {
                         const updatedState = typeof localStorage[storageOptions.name] === "string"
-                        ?
-                        { ...this.state, ...JSON.parse(localStorage[storageOptions.name]) }
-                        :
-                        { ...this.state }
-    
+                            ?
+                            { ...this.state, ...JSON.parse(localStorage[storageOptions.name]) }
+                            :
+                            { ...this.state }
+
                         this.setState(updatedState, () => {
                             localStorage.setItem(storageOptions.name, JSON.stringify(this.state))
                         })
-                    } catch(error){
-                        // do nothing
-                    }
+                    // } catch (error) {
+                    //     // do nothing
+                    // }
                 }
             }
 
@@ -176,11 +183,11 @@ class Midstate {
 
             render() {
                 return (
-                    <Context.Provider value={{ 
-                        state: this.state, 
-                        setters: this.setters, 
-                        constants: constants, 
-                        methods: this.methods 
+                    <Context.Provider value={{
+                        state: this.state,
+                        setters: this.setters,
+                        constants: constants,
+                        methods: this.methods
                     }}>
                         {this.props.children}
                     </Context.Provider>

@@ -40,15 +40,18 @@ export const createStateSetters = (state, bindToLocalStorage, storageName=null, 
         formattedName = formatStateName(s);
 
         if (formattedName) {
-            setters[formattedName] = function (value) {
+            setters[formattedName] = async function (value) {
                 const newState = {}
                 newState[s] = value;
-                return new Promise(resolve => {
-                    this.setState(newState, () => {
-                        bindToLocalStorage && localStorage.setItem(storageName, JSON.stringify(this.state))
-                        resolve(this.state)
-                    })
+                return new Promise(async resolve => {
+                    resolve(await this.setState(newState))
                 })
+                // return new Promise(resolve => {
+                //     this.setState(newState, () => {
+                //         bindToLocalStorage && localStorage.setItem(storageName, JSON.stringify(this.state))
+                //         resolve(this.state)
+                //     })
+                // })
             }
         }
 

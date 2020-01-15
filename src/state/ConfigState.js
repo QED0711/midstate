@@ -7,8 +7,9 @@ const state = {
 }
 
 const setters = {
-    setTitleColor(titleColor){
-        this.setStorageState({titleColor})
+    async setTitleColor(color){
+        const {titleColor} = await this.setState({titleColor: color})
+        console.log({titleColor})
     }
 }
 

@@ -12,12 +12,17 @@ const MainContainer = () => {
 
     msInstance.clearStateFromStorage()
 
+    const handleClick = e => {
+        setTitle("my awesome new title")
+    }
+
     // console.log({ state, setters, constants, methods })
 
     return (
 
         <div>
             <h1 style={{backgroundColor, color: titleColor}}>{title}</h1>
+            <button onClick={handleClick}>Change the title</button>
         </div>
 
     )
