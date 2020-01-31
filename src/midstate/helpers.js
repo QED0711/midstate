@@ -46,15 +46,24 @@ export const createStateSetters = (state, bindToLocalStorage, storageName=null, 
                 return new Promise(async resolve => {
                     resolve(await this.setState(newState))
                 })
-                // return new Promise(resolve => {
-                //     this.setState(newState, () => {
-                //         bindToLocalStorage && localStorage.setItem(storageName, JSON.stringify(this.state))
-                //         resolve(this.state)
-                //     })
-                // })
             }
         }
 
     }
     return setters;
+}
+
+export const createReducerDispatchers = (reducers) => {
+    const reducerMethods = {}
+    for(let r in reducers){
+        // console.log(r)
+        reducerMethods[r] = (state, action) => {
+                this.setState(reducers[r](state, action))
+            }
+        
+    }
+
+    // console.log(reducerMethods.stateReducer)
+
+    return reducerMethods
 }

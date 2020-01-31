@@ -3,10 +3,13 @@ import React, { useContext } from 'react'
 import { ConfigContext } from '../state/ConfigState';
 
 const ConfigContainer = () => {
-    const { state, setters } = useContext(ConfigContext)
+    const { state, setters, reducers } = useContext(ConfigContext)
 
     const { title, titleColor, backgroundColor } = state;
     const { setTitle, setBackgroundColor, setTitleColor } = setters;
+    const { stateReducer } = reducers
+
+    console.log(stateReducer.dispatch)
 
     const handleClick = color => async e => {
         // by default, setters will use the adjusted setState and will return promises for asynchronous execution
@@ -50,7 +53,7 @@ const ConfigContainer = () => {
                 value={title}
                 onChange={handleChange}
             />
-            
+
             <input
                 id="title-color-input"
                 type="text"

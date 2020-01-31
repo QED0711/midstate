@@ -13,10 +13,23 @@ const setters = {
     }
 }
 
+const reducers = {
+    stateReducer(state, action){
+        switch(action.type){
+            case "CHANGE_TITLE":
+                return ({...state, ...action.payload})
+            default:
+                return state
+        }
+    }
+}
+
+
 const config = new Midstate(state)
 
 config.addCustomSetters(setters)
 config.connectToLocalStorage({name: "config-state"})
+config.addReducers(reducers)
 
 export const ConfigContext = config.context
 export const ConfigProvider = config.createProvider()

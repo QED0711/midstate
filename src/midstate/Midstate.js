@@ -1,6 +1,6 @@
 import React, { createContext, Component } from "react";
 
-import { bindMethods, createStateSetters } from "./helpers";
+import { bindMethods, createStateSetters, createReducerDispatchers } from "./helpers";
 
 
 const DEFAULT_OPTIONS = {
@@ -21,6 +21,7 @@ class Midstate {
         this.state = state;
 
         this.setters = {};
+        this.reducers = {};
         this.constants = {}
         this.methods = {}
 
@@ -43,6 +44,11 @@ class Midstate {
 
     addCustomSetters(setters) {
         this.setters = setters
+    }
+
+    addReducers(reducers) {
+        this.reducers = createReducerDispatchers(reducers)
+
     }
 
     addConstants(newConstants) {
@@ -73,6 +79,7 @@ class Midstate {
         const Context = this.context;
         const state = this.state;
         let constants = this.constants
+        let reducers = this.reducers
         let methods = this.methods;
 
         const bindToLocalStorage = this.bindToLocalStorage;
@@ -117,6 +124,10 @@ class Midstate {
                 super(props);
                 this.state = state
                 this.setters = bindMethods(setters, this);
+
+                this.generateDispatchers = this.generateDispatchers.bind(this);
+                this.reducers = this.generateDispatchers(reducers)
+                console.log(this.reducers)
                 this.methods = bindMethods(methods, this);
 
                 this.bindToLocalStorage = bindToLocalStorage;
@@ -128,7 +139,7 @@ class Midstate {
                 this.setStateMaster = this.setState;
 
                 // Reassign setState function to return a promise, and by default, handle localStorage changes
-                this.setState = function(state){
+                this.setState = function (state) {
                     return new Promise(resolve => {
                         this.setStateMaster(state, () => {
                             this.bindToLocalStorage && localStorage.setItem(this.storageOptions.name, JSON.stringify(this.state))
@@ -138,6 +149,24 @@ class Midstate {
                 }
 
                 this.setState = this.setState.bind(this);
+            }
+
+            dispatch(reducerKey) {
+                return function (state, action) {
+                    this.setState(this.reducers[reducerKey](state, action))
+                }
+            }
+
+            generateDispatchers(reducers) {
+                const reducersWithDispatchers = {}
+                let dispatch;
+                for (let reducer in reducers) {
+                    dispatch = this.dispatch(reducer).bind(this);
+                    reducersWithDispatchers[reducer] = { dispatch }
+                    // reducersWithDispatchers[reducer].dispatch = this.dispatch(reducer).bind(this)
+                }
+
+                return reducersWithDispatchers
             }
 
             updateStateFromLocalStorage() {
@@ -173,6 +202,9 @@ class Midstate {
                     constants: constants,
                     methods: this.methods
                 }
+
+                if (Object.keys(reducers).length) value.reducers = reducers
+
                 return (
                     <Context.Provider value={value}>
                         {this.props.children}
