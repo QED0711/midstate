@@ -47,7 +47,7 @@ class Midstate {
     }
 
     addReducers(reducers) {
-        this.reducers = createReducerDispatchers(reducers)
+        this.reducers = reducers
 
     }
 
@@ -125,9 +125,14 @@ class Midstate {
                 this.state = state
                 this.setters = bindMethods(setters, this);
 
+                // set this.reducers to the reducered added in the Midstate Class 
+                this.reducers = reducers
+                // bind generatDispatchers
                 this.generateDispatchers = this.generateDispatchers.bind(this);
-                this.reducers = this.generateDispatchers(reducers)
-                console.log(this.reducers)
+                // Create reducers that are copies in name of the previously added reducers
+                // Then, give a dispatch method to each that will execute the actual reducer
+                this.reducersWithDispatchers = this.generateDispatchers(reducers)
+                
                 this.methods = bindMethods(methods, this);
 
                 this.bindToLocalStorage = bindToLocalStorage;
@@ -135,14 +140,15 @@ class Midstate {
 
                 this.updateStateFromLocalStorage = this.updateStateFromLocalStorage.bind(this);
 
-                // assign master version of setState prior to reassignment
+                // Save master version of setState prior to reassignment
                 this.setStateMaster = this.setState;
 
                 // Reassign setState function to return a promise, and by default, handle localStorage changes
-                this.setState = function (state) {
+                this.setState = function (state, callback = () => {}) {
                     return new Promise(resolve => {
                         this.setStateMaster(state, () => {
                             this.bindToLocalStorage && localStorage.setItem(this.storageOptions.name, JSON.stringify(this.state))
+                            callback(this.state)
                             resolve(this.state)
                         })
                     })
@@ -151,19 +157,26 @@ class Midstate {
                 this.setState = this.setState.bind(this);
             }
 
-            dispatch(reducerKey) {
-                return function (state, action) {
-                    this.setState(this.reducers[reducerKey](state, action))
-                }
-            }
+            // dispatch(reducerKey) {
+            //     return function (state, action) {
+            //         this.setState(this.reducers[reducerKey](state, action))
+            //     }
+            // }
 
             generateDispatchers(reducers) {
                 const reducersWithDispatchers = {}
+                
+                // define a dispatcher factory to handle the creation of new dispatchers
+                const dispatcherFactory = function(reducerKey){
+                    return function (state, action) {
+                        this.setState(this.reducers[reducerKey](state, action))
+                    }
+                }
+
                 let dispatch;
                 for (let reducer in reducers) {
-                    dispatch = this.dispatch(reducer).bind(this);
+                    dispatch = dispatcherFactory(reducer).bind(this);
                     reducersWithDispatchers[reducer] = { dispatch }
-                    // reducersWithDispatchers[reducer].dispatch = this.dispatch(reducer).bind(this)
                 }
 
                 return reducersWithDispatchers
@@ -203,7 +216,7 @@ class Midstate {
                     methods: this.methods
                 }
 
-                if (Object.keys(reducers).length) value.reducers = reducers
+                if (Object.keys(reducers).length) value.reducers = this.reducersWithDispatchers
 
                 return (
                     <Context.Provider value={value}>

@@ -9,12 +9,13 @@ const ConfigContainer = () => {
     const { setTitle, setBackgroundColor, setTitleColor } = setters;
     const { stateReducer } = reducers
 
-    console.log(stateReducer.dispatch)
 
     const handleClick = color => async e => {
         // by default, setters will use the adjusted setState and will return promises for asynchronous execution
         const state = await setBackgroundColor(color)
         // console.log({state})
+
+        stateReducer.dispatch(state, {type: "CHANGE_TITLE", payload: {title: "SOME TITLE FROM REDUCER"}})
     }
 
 
